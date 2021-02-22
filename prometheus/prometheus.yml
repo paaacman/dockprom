@@ -34,6 +34,37 @@ scrape_configs:
     static_configs:
       - targets: ['pushgateway:9091']
 
+  - job_name: 'blackbox'
+    scrape_interval: 60s
+    metrics_path: /probe
+    params:
+      module: [http_get]  # Look for a HTTP 200 response.
+    file_sd_configs:
+      - files: [ 'blackbox_targets.yml' ]
+    relabel_configs:
+      - source_labels: [__address__]
+        regex: (.*)(:80)?
+        target_label: __param_target
+      - source_labels: [__param_target]
+        regex: (.*)
+        target_label: instance
+        replacement: ${1}
+      - source_labels: []
+        regex: .*
+        target_label: __address__
+        replacement: blackboxexporter:9115
+
+#  - job_name:       'hostname'
+#    scrape_interval: 60s
+#    scheme: 'http'
+#    metrics_path: '/probe'
+#    params:
+#      module: ['http_post']
+#      target: ['http://xxx.xxx.xxx.xxx:8080/API']
+#    static_configs:
+#      - targets: ['blackbox-exporter:9115']
+#        labels:
+#          group: 'blackbox_exporter'
 
 alerting:
   alertmanagers:
@@ -46,8 +77,3 @@ alerting:
 #    scrape_interval: 10s
 #    static_configs:
 #      - targets: ['nginxexporter:9113']
-
-#  - job_name: 'aspnetcore'
-#    scrape_interval: 10s
-#    static_configs:
-#      - targets: ['eventlog-proxy:5000', 'eventlog:5000']

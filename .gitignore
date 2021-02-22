@@ -2,3 +2,5 @@
 .vs/
 .vscode/
 .idea/
+prometheus/blackbox_targets.yml
+prometheus/alert.rules

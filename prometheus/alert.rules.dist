@@ -41,30 +41,30 @@ groups:
 
 - name: containers
   rules:
-  - alert: jenkins_down
-    expr: absent(container_memory_usage_bytes{name="jenkins"})
+  - alert: container_1_down
+    expr: absent(container_memory_usage_bytes{container_label_com_docker_compose_service="container_1"})
     for: 30s
     labels:
       severity: critical
     annotations:
-      summary: "Jenkins down"
-      description: "Jenkins container is down for more than 30 seconds."
+      summary: "container_1 down"
+      description: "container_1 container is down for more than 30 seconds."
 
-  - alert: jenkins_high_cpu
-    expr: sum(rate(container_cpu_usage_seconds_total{name="jenkins"}[1m])) / count(node_cpu_seconds_total{mode="system"}) * 100 > 10
+  - alert: container_1_high_cpu
+    expr: sum(rate(container_cpu_usage_seconds_total{container_label_com_docker_compose_service="engine"}[1m])) / count(node_cpu_seconds_total{mode="system"}) * 100 > 10
     for: 30s
     labels:
       severity: warning
     annotations:
-      summary: "Jenkins high CPU usage"
-      description: "Jenkins CPU usage is {{ humanize $value}}%."
+      summary: "container_1 high CPU usage"
+      description: "container_1 CPU usage is {{ humanize $value}}%."
 
-  - alert: jenkins_high_memory
-    expr: sum(container_memory_usage_bytes{name="jenkins"}) > 1200000000
+  - alert: container_1_high_memory
+    expr: sum(container_memory_usage_bytes{container_label_com_docker_compose_service="engine"}) > 1200000000
     for: 30s
     labels:
       severity: warning
     annotations:
-      summary: "Jenkins high memory usage"
-      description: "Jenkins memory consumption is at {{ humanize $value}}."
+      summary: "container_1 high memory usage"
+      description: "container_1 memory consumption is at {{ humanize $value}}."
 

@@ -123,7 +123,9 @@ Three alert groups have been setup within the [alert.rules](https://github.com/s
 * Monitoring services alerts [targets](https://github.com/stefanprodan/dockprom/blob/master/prometheus/alert.rules#L2-L11)
 * Docker Host alerts [host](https://github.com/stefanprodan/dockprom/blob/master/prometheus/alert.rules#L13-L40)
 * Docker Containers alerts [containers](https://github.com/stefanprodan/dockprom/blob/master/prometheus/alert.rules#L42-L69)
-
+  
+First, create your `prometheus/alert.rules` file.  
+  
 You can modify the alert rules and reload them by making a HTTP POST call to Prometheus:
 
 ```
@@ -269,6 +271,12 @@ To push data, simply execute:
     echo "some_metric 3.14" | curl --data-binary @- http://user:password@localhost:9091/metrics/job/some_job
 
 Please replace the `user:password` part with your user and password set in the initial configuration (default: `admin:admin`).
+
+
+## Setup blackbox exporter
+
+The blackbox exporter allows blackbox probing of endpoints over HTTP, HTTPS, DNS, TCP and ICMP. See [https://github.com/prometheus/blackbox_exporter](https://github.com/prometheus/blackbox_exporter).
+Add targets you want to monitor in `prometheus/blackbox_targets.yml`.
 
 ## Updating Grafana to v5.2.2
 

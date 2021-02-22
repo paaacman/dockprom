@@ -1,0 +1,15 @@
+modules:
+  http_post:
+    prober: http
+    timeout: 5m
+    http:
+      method: POST
+      headers:
+        Content-Type: application/json
+      body: '{}'
+  http_get:
+    prober: http
+    timeout: 5m
+    http:
+      method: GET
+      preferred_ip_protocol: "ip4"
