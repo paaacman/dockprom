@@ -36,7 +36,7 @@ services:
     image: nginx/nginx-prometheus-exporter:latest
     container_name: nginxexporter
     command:
-      - '-nginx.scrape-uri=${NGINX_SCRAPE_URI:-http://localhost:8080/nginx_status}'
+      - '-nginx.scrape-uri=${NGINX_SCRAPE_URI:-http://localhost:8087/nginx_status}'
     restart: unless-stopped
     ports:
       - 9113:9113

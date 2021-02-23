@@ -1,4 +1,4 @@
-version: '2.1'
+version: '3'
 
 networks:
   monitor-net:
@@ -59,6 +59,7 @@ services:
       - '--path.rootfs=/rootfs'
       - '--path.sysfs=/host/sys'
       - '--collector.filesystem.ignored-mount-points=^/(sys|proc|dev|host|etc)($$|/)'
+      - '--no-collector.rapl'
     restart: unless-stopped
     expose:
       - 9100
@@ -68,7 +69,7 @@ services:
       org.label-schema.group: "monitoring"
 
   cadvisor:
-    image: gcr.io/cadvisor/cadvisor:v0.38.8
+    image: gcr.io/cadvisor/cadvisor:latest
     container_name: cadvisor
     volumes:
       - /:/rootfs:ro
@@ -76,7 +77,10 @@ services:
       - /sys:/sys:ro
       - /var/lib/docker:/var/lib/docker:ro
       - /cgroup:/cgroup:ro
+      - /dev/disk/:/dev/disk:ro
     restart: unless-stopped
+    devices:
+      - /dev/kmsg:/dev/kmsg
     expose:
       - 8080
     networks:
@@ -144,13 +148,15 @@ services:
     volumes:
       - ./blackbox/config:/config
     command: '--config.file=/config/blackbox.yml'
+    labels:
+      org.label-schema.group: "monitoring"
 
 
   nginxexporter:
     image: nginx/nginx-prometheus-exporter:latest
     container_name: nginxexporter
     command:
-      - '-nginx.scrape-uri=${NGINX_SCRAPE_URI:-http://localhost:8080/nginx_status}'
+      - '-nginx.scrape-uri=${NGINX_SCRAPE_URI:-http://localhost:8087/nginx_status}'
     restart: unless-stopped
     ports:
       - 9113:9113
