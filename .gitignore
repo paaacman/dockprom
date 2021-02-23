@@ -4,3 +4,4 @@
 .idea/
 prometheus/blackbox_targets.yml
 prometheus/alert.rules.yml
+alertmanager/alertmanager.yml

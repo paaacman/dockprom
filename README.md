@@ -124,7 +124,7 @@ Three alert groups have been setup within the [alert.rules.yml](https://github.c
 * Docker Host alerts [host](https://github.com/stefanprodan/dockprom/blob/master/prometheus/alert.rules#L13-L40)
 * Docker Containers alerts [containers](https://github.com/stefanprodan/dockprom/blob/master/prometheus/alert.rules#L42-L69)
   
-First, create your `prometheus/alert.rules.yml` file.  
+First, create the `prometheus/alert.rules.yml` file.  
 You can check rules with `docker-compose exec prometheus promtool check rules /etc/prometheus/alert.rules.yml`
   
 You can modify the alert rules and reload them by making a HTTP POST call to Prometheus:
@@ -237,6 +237,8 @@ Trigger an alert if a container is using more than 1.2GB of RAM for more than 30
 The AlertManager service is responsible for handling alerts sent by Prometheus server.
 AlertManager can send notifications via email, Pushover, Slack, HipChat or any other system that exposes a webhook interface.
 A complete list of integrations can be found [here](https://prometheus.io/docs/alerting/configuration).
+
+First create the `alertmanager/alertmanager.yml` file.  
 
 You can view and silence notifications by accessing `http://<host-ip>:9093`.
 
