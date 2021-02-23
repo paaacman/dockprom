@@ -3,4 +3,4 @@
 .vscode/
 .idea/
 prometheus/blackbox_targets.yml
-prometheus/alert.rules
+prometheus/alert.rules.yml

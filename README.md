@@ -118,13 +118,14 @@ The Monitor Services Dashboard shows key metrics for monitoring the containers t
 
 ## Define alerts
 
-Three alert groups have been setup within the [alert.rules](https://github.com/stefanprodan/dockprom/blob/master/prometheus/alert.rules) configuration file:
+Three alert groups have been setup within the [alert.rules.yml](https://github.com/stefanprodan/dockprom/blob/master/prometheus/alert.rules) configuration file:
 
 * Monitoring services alerts [targets](https://github.com/stefanprodan/dockprom/blob/master/prometheus/alert.rules#L2-L11)
 * Docker Host alerts [host](https://github.com/stefanprodan/dockprom/blob/master/prometheus/alert.rules#L13-L40)
 * Docker Containers alerts [containers](https://github.com/stefanprodan/dockprom/blob/master/prometheus/alert.rules#L42-L69)
   
-First, create your `prometheus/alert.rules` file.  
+First, create your `prometheus/alert.rules.yml` file.  
+You can check rules with `docker-compose exec prometheus promtool check rules /etc/prometheus/alert.rules.yml`
   
 You can modify the alert rules and reload them by making a HTTP POST call to Prometheus:
 
