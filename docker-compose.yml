@@ -35,7 +35,7 @@ services:
     image: prom/alertmanager:v0.21.0
     container_name: alertmanager
     volumes:
-      - ./alertmanager:/etc/alertmanager
+      - ./alertmanager/alertmanager.yml:/etc/alertmanager/alertmanager.yml
     command:
       - '--config.file=/etc/alertmanager/alertmanager.yml'
       - '--storage.path=/alertmanager'
@@ -75,7 +75,7 @@ services:
       - /var/run:/var/run:rw
       - /sys:/sys:ro
       - /var/lib/docker:/var/lib/docker:ro
-      #- /cgroup:/cgroup:ro #doesn't work on MacOS only for Linux
+      - /cgroup:/cgroup:ro
     restart: unless-stopped
     expose:
       - 8080
@@ -144,3 +144,19 @@ services:
     volumes:
       - ./blackbox/config:/config
     command: '--config.file=/config/blackbox.yml'
+
+
+  nginxexporter:
+    image: nginx/nginx-prometheus-exporter:latest
+    container_name: nginxexporter
+    command:
+      - '-nginx.scrape-uri=${NGINX_SCRAPE_URI:-http://localhost:8080/nginx_status}'
+    restart: unless-stopped
+    ports:
+      - 9113:9113
+    networks:
+      - monitor-net
+    extra_hosts:
+      - "host.docker.internal:${DOCKER_HOST_INTERNAL_IP}"
+    labels:
+      org.label-schema.group: "monitoring"

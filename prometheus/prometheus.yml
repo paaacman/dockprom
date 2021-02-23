@@ -3,9 +3,9 @@ global:
   evaluation_interval: 15s
 
   # Attach these labels to any time series or alerts when communicating with
-  # external systems (federation, remote storage, Alertmanager).
+  # external systems (federation, remote storage, Alertmanager). (name of the host)
   external_labels:
-      monitor: 'docker-host-alpha'
+      monitor: 'Host server'
 
 # Load and evaluate rules in this file every 'evaluation_interval' seconds.
 rule_files:
@@ -54,17 +54,10 @@ scrape_configs:
         target_label: __address__
         replacement: blackboxexporter:9115
 
-#  - job_name:       'hostname'
-#    scrape_interval: 60s
-#    scheme: 'http'
-#    metrics_path: '/probe'
-#    params:
-#      module: ['http_post']
-#      target: ['http://xxx.xxx.xxx.xxx:8080/API']
-#    static_configs:
-#      - targets: ['blackbox-exporter:9115']
-#        labels:
-#          group: 'blackbox_exporter'
+  - job_name: 'nginxexporter'
+    scrape_interval: 10s
+    static_configs:
+      - targets: ['nginxexporter:9113']
 
 alerting:
   alertmanagers:
@@ -72,8 +65,3 @@ alerting:
     static_configs:
     - targets: 
       - 'alertmanager:9093'
-
-#  - job_name: 'nginx'
-#    scrape_interval: 10s
-#    static_configs:
-#      - targets: ['nginxexporter:9113']

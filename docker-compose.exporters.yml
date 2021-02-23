@@ -1,7 +1,6 @@
 version: '2.1'
 
 services:
-
   nodeexporter:
     image: prom/node-exporter:v1.1.1
     container_name: nodeexporter
@@ -29,6 +28,18 @@ services:
       - /var/lib/docker/:/var/lib/docker:ro
       - /cgroup:/cgroup:ro
     restart: unless-stopped
+    network_mode: host
+    labels:
+      org.label-schema.group: "monitoring"
+
+  nginxexporter:
+    image: nginx/nginx-prometheus-exporter:latest
+    container_name: nginxexporter
+    command:
+      - '-nginx.scrape-uri=${NGINX_SCRAPE_URI:-http://localhost:8080/nginx_status}'
+    restart: unless-stopped
+    ports:
+      - 9113:9113
     network_mode: host
     labels:
       org.label-schema.group: "monitoring"
