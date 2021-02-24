@@ -13,24 +13,37 @@ services:
       - '--path.rootfs=/rootfs'
       - '--path.sysfs=/host/sys'
       - '--collector.filesystem.ignored-mount-points=^/(sys|proc|dev|host|etc)($$|/)'
+      - '--no-collector.rapl'
     restart: unless-stopped
     network_mode: host
     labels:
       org.label-schema.group: "monitoring"
+      host.name: "${HOST_NAME}"
 
   cadvisor:
-    image: gcr.io/cadvisor/cadvisor:v0.38.8
+    image: gcr.io/cadvisor/cadvisor:latest
     container_name: cadvisor
     volumes:
       - /:/rootfs:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
       - /var/run:/var/run:rw
       - /sys:/sys:ro
-      - /var/lib/docker/:/var/lib/docker:ro
-      - /cgroup:/cgroup:ro
+      - /var/lib/docker:/var/lib/docker:ro
+      - /sys/fs/cgroup:/cgroup:ro
+      - /dev/disk/:/dev/disk:ro
+    command:
+      - '-housekeeping_interval=10s'
+      - '-docker_only=true'
     restart: unless-stopped
-    network_mode: host
+    devices:
+      - /dev/kmsg:/dev/kmsg
+    security_opt:
+      - no-new-privileges:true
+    expose:
+      - 8080
     labels:
       org.label-schema.group: "monitoring"
+      host.name: "${HOST_NAME}"
 
   nginxexporter:
     image: nginx/nginx-prometheus-exporter:latest
@@ -40,6 +53,8 @@ services:
     restart: unless-stopped
     ports:
       - 9113:9113
-    network_mode: host
+    extra_hosts:
+      - "host.docker.internal:${DOCKER_HOST_INTERNAL_IP}"
     labels:
       org.label-schema.group: "monitoring"
+      host.name: "${HOST_NAME}"

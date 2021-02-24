@@ -127,6 +127,7 @@ Three alert groups have been setup within the [alert.rules.yml](https://github.c
 First, create the `prometheus/alert.rules.yml` file.  
 You can check rules with `docker-compose exec prometheus promtool check rules /etc/prometheus/alert.rules.yml`
 See examples here [https://awesome-prometheus-alerts.grep.to/rules.html#prometheus-self-monitoring](https://awesome-prometheus-alerts.grep.to/rules.html#prometheus-self-monitoring)  
+To test alerts slack message, you can use this service: https://juliusv.com/promslack/
   
 You can modify the alert rules and reload them by making a HTTP POST call to Prometheus:
 

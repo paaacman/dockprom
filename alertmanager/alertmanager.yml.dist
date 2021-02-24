@@ -1,21 +1,27 @@
+global:
+  slack_api_url: 'SLACK_URL'
+
 route:
-    receiver: 'slack'
+  # If an alert has successfully been sent, wait 'repeat_interval' to
+  # resend them.
+  repeat_interval: 1m
+  receiver: 'slack'
 
 receivers:
-    - name: 'slack'
-      slack_configs:
-          - send_resolved: true
-            title: '{{ template "slack.default.title" . }}'
-            title_link: '{{ template "slack.default.titlelink" . }}'
-            pretext: '{{ .CommonAnnotations.summary }}'
-            text:
-              >-
-              {{ range .Alerts }}
-               *Alert:* {{ .Annotations.summary }} - `{{ .Labels.severity }}`📊
-               *Description:* {{ .Annotations.description }}
-               *Details:*
-               {{ range .Labels.SortedPairs }} • *{{ .Name }}:* `{{ .Value }}`
-               {{ end }}
-              {{ end }}
-            username: 'Prometheus'
-            api_url: 'YOUR SLACK WEBHOOK API'
+  - name: 'slack'
+    slack_configs:
+      - send_resolved: true
+        #color: '{{ if eq .Status "firing" -}}{{ if eq .CommonLabels.severity "warning" -}}warning{{- else if eq .CommonLabels.severity "critical" -}}danger{{- else -}}#439FE0{{- end -}}{{ else -}}good{{- end }}'
+        title: '{{ template "slack.default.title" . }}'
+        title_link: '{{ template "slack.default.titlelink" . }}'
+        pretext: '{{ .CommonAnnotations.summary }}'
+        text:
+          >-
+          {{ range .Alerts }}
+           *Alert:* {{ .Labels.container_label_host_name }} - {{ .Annotations.summary }} - `{{ .Labels.severity }}`📊
+           *Description:* {{ .Annotations.description }}
+           *Details:*
+           {{ range .Labels.SortedPairs }}{{ if not (match "container_label_com_docker_compose.*" .Name) }} • *{{ .Name }}:* `{{ .Value }}`
+           {{ end }}{{ end }}
+          {{ end }}
+        username: 'Prometheus'
