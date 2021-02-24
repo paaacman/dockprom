@@ -1,6 +1,6 @@
 global:
-  scrape_interval:     15s
-  evaluation_interval: 15s
+  scrape_interval:     20s
+  evaluation_interval: 20s
 
   # Attach these labels to any time series or alerts when communicating with
   # external systems (federation, remote storage, Alertmanager). (name of the host)
@@ -9,7 +9,7 @@ global:
 
 # Load and evaluate rules in this file every 'evaluation_interval' seconds.
 rule_files:
-  - "alert.rules.yml"
+  - 'alerts/*.yml'
 
 # A scrape configuration containing exactly one endpoint to scrape.
 scrape_configs:
@@ -19,7 +19,7 @@ scrape_configs:
       - targets: ['nodeexporter:9100']
 
   - job_name: 'cadvisor'
-    scrape_interval: 5s
+    scrape_interval: 15s
     static_configs:
       - targets: ['cadvisor:8080']
 

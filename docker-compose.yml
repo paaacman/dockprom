@@ -73,14 +73,21 @@ services:
     container_name: cadvisor
     volumes:
       - /:/rootfs:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
       - /var/run:/var/run:rw
       - /sys:/sys:ro
       - /var/lib/docker:/var/lib/docker:ro
-      - /cgroup:/cgroup:ro
+      - /sys/fs/cgroup:/cgroup:ro
       - /dev/disk/:/dev/disk:ro
+    command:
+      - '-housekeeping_interval=10s'
+      - '-docker_only=true'
+      - '-profiling'
     restart: unless-stopped
     devices:
       - /dev/kmsg:/dev/kmsg
+    security_opt:
+      - no-new-privileges:true
     expose:
       - 8080
     networks:
@@ -126,6 +133,8 @@ services:
       - "9090:9090"
       - "9093:9093"
       - "9091:9091"
+      - "9115:9115"
+      - "8080:8080"
     volumes:
       - ./caddy:/etc/caddy
     environment:
@@ -141,8 +150,8 @@ services:
     image: prom/blackbox-exporter
     container_name: blackboxexporter
     restart: unless-stopped
-    ports:
-      - "9115:9115"
+    expose:
+      - 9115
     networks:
       - monitor-net
     volumes:

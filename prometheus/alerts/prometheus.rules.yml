@@ -1,0 +1,67 @@
+# THANKS https://awesome-prometheus-alerts.grep.to/rules.html
+groups:
+  - name: Prometheus
+    rules:
+      - alert: monitor_service_down
+        expr: up == 0
+        for: 30s
+        labels:
+          severity: critical
+        annotations:
+          title: "Instance {{ $labels.instance }} down"
+          summary: "Monitor service targets non-operational"
+          description: "{{ $labels.instance }} has been down for more than 30 seconds."
+
+      - alert: PrometheusConfigurationReloadFailure
+        expr: prometheus_config_last_reload_successful != 1
+        for: 0m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Prometheus configuration reload failure (instance {{ $labels.instance }})"
+          description: "Prometheus configuration reload error\n  VALUE = {{ $value }}"
+
+      - alert: PrometheusTooManyRestarts
+        expr: changes(process_start_time_seconds{job=~"prometheus|pushgateway|alertmanager"}[15m]) > 2
+        for: 0m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Prometheus too many restarts (instance {{ $labels.instance }})"
+          description: "Prometheus has restarted more than twice in the last 15 minutes. It might be crashlooping.\n  VALUE = {{ $value }}"
+
+      - alert: PrometheusRuleEvaluationFailures
+        expr: increase(prometheus_rule_evaluation_failures_total[3m]) > 0
+        for: 0m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Prometheus rule evaluation failures (instance {{ $labels.instance }})"
+          description: "Prometheus encountered {{ $value }} rule evaluation failures, leading to potentially ignored alerts.\n  VALUE = {{ $value }}"
+
+      - alert: PrometheusRuleEvaluationSlow
+        expr: prometheus_rule_group_last_duration_seconds > prometheus_rule_group_interval_seconds
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Prometheus rule evaluation slow (instance {{ $labels.instance }})"
+          description: "Prometheus rule evaluation took more time than the scheduled interval. It indicates a slower storage backend access or too complex query.\n  VALUE = {{ $value }}"
+
+      - alert: PrometheusNotificationsBacklog
+        expr: min_over_time(prometheus_notifications_queue_length[10m]) > 0
+        for: 0m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Prometheus notifications backlog (instance {{ $labels.instance }})"
+          description: "The Prometheus notification queue has not been empty for 10 minutes\n  VALUE = {{ $value }}"
+
+      - alert: PrometheusAlertmanagerNotificationFailing
+        expr: rate(alertmanager_notifications_failed_total[1m]) > 0
+        for: 0m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Prometheus AlertManager notification failing (instance {{ $labels.instance }})"
+          description: "Alertmanager is failing sending notifications\n  VALUE = {{ $value }}"
