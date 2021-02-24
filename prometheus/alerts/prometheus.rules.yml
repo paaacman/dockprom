@@ -22,7 +22,7 @@ groups:
           description: "Prometheus configuration reload error\n  VALUE = {{ $value }}"
 
       - alert: PrometheusTooManyRestarts
-        expr: changes(process_start_time_seconds{job=~"prometheus|pushgateway|alertmanager"}[15m]) > 2
+        expr: changes(process_start_time_seconds{job=~"prometheus|alertmanager"}[15m]) > 2
         for: 0m
         labels:
           severity: warning

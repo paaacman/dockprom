@@ -119,18 +119,6 @@ services:
       group: "monitoring"
       host.name: "${HOST_NAME}"
 
-  pushgateway:
-    image: prom/pushgateway:v1.4.0
-    container_name: pushgateway
-    restart: unless-stopped
-    expose:
-      - 9091
-    networks:
-      - monitor-net
-    labels:
-      group: "monitoring"
-      host.name: "${HOST_NAME}"
-
   caddy:
     image: stefanprodan/caddy
     container_name: caddy
