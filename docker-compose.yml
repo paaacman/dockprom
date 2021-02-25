@@ -29,6 +29,8 @@ services:
     restart: unless-stopped
     expose:
       - 9090
+    ports:
+      - ${PROMETHEUS_PORT:-9090}:9090
     networks:
       - monitor-net
     labels:
@@ -43,12 +45,13 @@ services:
       - ./grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards
       - ./grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
     environment:
-      - GF_SECURITY_ADMIN_USER=${ADMIN_USER:-admin}
-      - GF_SECURITY_ADMIN_PASSWORD=${ADMIN_PASSWORD:-admin}
+      - GF_DEFAULT_INSTANCE_NAME=${HOST_NAME}
+      - GF_SECURITY_ADMIN_USER
+      - GF_SECURITY_ADMIN_PASSWORD
       - GF_USERS_ALLOW_SIGN_UP=false
     restart: unless-stopped
-    expose:
-      - 3000
+    ports:
+      - ${GRAFANA_PORT:-3000}:3000
     networks:
       - monitor-net
       - loki
@@ -96,25 +99,37 @@ services:
       group: "monitoring"
       host.name: "${HOST_NAME}"
 
-  caddy:
-    image: stefanprodan/caddy
-    container_name: caddy
-    ports:
-      - "3000:3000"
-      - "9090:9090"
-      - "9093:9093"
-      - "9091:9091"
-      - "9115:9115"
-      - "8080:8080"
-      - "${LOKI_PORT:-3100}:3100"
+  loki:
+    image: grafana/loki:2.1.0
+    container_name: loki
     volumes:
-      - ./caddy:/etc/caddy
-    environment:
-      - ADMIN_USER=${ADMIN_USER:-admin}
-      - ADMIN_PASSWORD=${ADMIN_PASSWORD:-admin}
-    restart: unless-stopped
+      - ./loki/loki.yml:/etc/loki/loki.yml
+      - ./loki/alerts:/etc/loki/alerts
+      - loki_data:/loki
+    ports:
+      - ${LOKI_PORT:-3100}:3100
+    command:
+      - '-config.file=/etc/loki/loki.yml'
+      - '-config.expand-env=true'
     networks:
-      - monitor-net
+      - loki
+    labels:
+      group: "monitoring"
+      host.name: "${HOST_NAME}"
+
+  promtail:
+    image: grafana/promtail:2.1.0
+    container_name: promtail
+    environment:
+      - HOST_NAME=${HOST_NAME}
+    volumes:
+      - ./promtail/promtail.yml:/etc/promtail/promtail.yml
+      - promtail_data:/promtail/
+      - /var/log:/var/log:ro
+    command:
+      - '-config.file=/etc/promtail/promtail.yml'
+      - '-config.expand-env=true'
+    networks:
       - loki
     labels:
       group: "monitoring"
@@ -174,42 +189,6 @@ services:
       - monitor-net
     extra_hosts:
       - "host.docker.internal:${DOCKER_HOST_INTERNAL_IP}"
-    labels:
-      group: "monitoring"
-      host.name: "${HOST_NAME}"
-
-  loki:
-    image: grafana/loki:2.1.0
-    container_name: loki
-    volumes:
-      - ./loki/loki.yml:/etc/loki/loki.yml
-      - ./loki/alerts:/etc/loki/alerts
-      - loki_data:/loki
-    expose:
-      - 3100
-    command:
-      - '-config.file=/etc/loki/loki.yml'
-      - '-config.expand-env=true'
-    networks:
-      - loki
-    labels:
-      group: "monitoring"
-      host.name: "${HOST_NAME}"
-
-  promtail:
-    image: grafana/promtail:2.1.0
-    container_name: promtail
-    environment:
-      - HOST_NAME=${HOST_NAME}
-    volumes:
-      - ./promtail/promtail.yml:/etc/promtail/promtail.yml
-      - promtail_data:/promtail/
-      - /var/log:/var/log:ro
-    command:
-      - '-config.file=/etc/promtail/promtail.yml'
-      - '-config.expand-env=true'
-    networks:
-      - loki
     labels:
       group: "monitoring"
       host.name: "${HOST_NAME}"

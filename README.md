@@ -1,20 +1,20 @@
-dockprom
-========
+promstack (from [dockprom](https://github.com/stefanprodan/dockprom))
+======================================================================
 
 A monitoring solution for Docker hosts and containers with [Prometheus](https://prometheus.io/), [Grafana](http://grafana.org/), [cAdvisor](https://github.com/google/cadvisor),
-[NodeExporter](https://github.com/prometheus/node_exporter) and alerting with [AlertManager](https://github.com/prometheus/alertmanager).
+[NodeExporter](https://github.com/prometheus/node_exporter), alerting with [AlertManager](https://github.com/prometheus/alertmanager) and [Loki](https://grafana.com/oss/loki/).
 
-***If you're looking for the Docker Swarm version please go to [stefanprodan/swarmprom](https://github.com/stefanprodan/swarmprom)***
+***If you're looking for a Docker Swarm version please go to [stefanprodan/swarmprom](https://github.com/stefanprodan/swarmprom)***
 
 ## Install
 
-Clone this repository on your Docker host, cd into dockprom directory and run compose up:
+Clone this repository on your Docker host, cd into promstack directory and run compose up:
 
 ```bash
-git clone https://github.com/stefanprodan/dockprom
-cd dockprom
+git clone https://github.com/paaacman/promstack
+cd promstack
 
-ADMIN_USER=admin ADMIN_PASSWORD=admin docker-compose up -d
+GF_SECURITY_ADMIN_USER=admin GF_SECURITY_ADMIN_PASSWORD=admin docker-compose up -d
 ```
 
 Prerequisites:
@@ -29,19 +29,18 @@ Containers:
 * Grafana (visualize metrics) `http://<host-ip>:3000`
 * NodeExporter (host metrics collector)
 * cAdvisor (containers metrics collector)
-* Caddy (reverse proxy and basic auth provider for prometheus and alertmanager)
 * blackboxexporter (monitor website availability)  `http://<host-ip>:9115`
 * loki (log aggregation) `http://<host-ip>:3100`
 * promtail (get log files)
 
 Files to personalize :
-* .env (from [.env.dist](.env.dist))
+* .env (from [.env.dist](.env.dist)). If you change Prometheus port, change it manually in Grafana dashboards.
 * alertmanager/alertmanager.yml (from [alertmanager/alertmanager.yml.dist](alertmanager/alertmanager.yml.dist))
 * prometheus/blackbox_targets.yml (from [prometheus/blackbox_targets.yml.dist](prometheus/blackbox_targets.yml.dist))
 
 ## Setup Grafana
 
-Navigate to `http://<host-ip>:3000` and login with user ***admin*** password ***admin***. You can change the credentials in the compose file or by supplying the `ADMIN_USER` and `ADMIN_PASSWORD` environment variables on compose up. The config file can be added directly in grafana part like this.
+Navigate to `http://<host-ip>:3000` and login with user ***admin*** password ***admin***. You can change the credentials in the compose file or by supplying the `GF_SECURITY_ADMIN_USER` and `GF_SECURITY_ADMIN_PASSWORD` environment variables on compose up. The config file can be added directly in grafana part like this.
 You can also set those environment variables in a `.env` file.
 ```
 grafana:
@@ -161,7 +160,7 @@ curl -X POST http://admin:admin@<host-ip>:9090/-/reload
 
 ## Setup alerting
 
-The AlertManager service is responsible for handling alerts sent by Prometheus server.
+The AlertManager service is responsible for handling alerts sent by Prometheus and Loki servers.
 AlertManager can send notifications via email, Pushover, Slack, HipChat or any other system that exposes a webhook interface.
 A complete list of integrations can be found [here](https://prometheus.io/docs/alerting/configuration).
 
@@ -215,8 +214,8 @@ First perform a `docker-compose down` then modify your docker-compose.yml to inc
     entrypoint: /setup.sh
     user: root
     environment:
-      - GF_SECURITY_ADMIN_USER=${ADMIN_USER:-admin}
-      - GF_SECURITY_ADMIN_PASSWORD=${ADMIN_PASSWORD:-admin}
+      - GF_SECURITY_ADMIN_USER=${GF_SECURITY_ADMIN_USER:-admin}
+      - GF_SECURITY_ADMIN_PASSWORD=${GF_SECURITY_ADMIN_PASSWORD:-admin}
       - GF_USERS_ALLOW_SIGN_UP=false
     restart: unless-stopped
     expose:
