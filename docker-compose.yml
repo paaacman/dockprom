@@ -26,6 +26,7 @@ services:
       - '--storage.tsdb.retention.time=200h'
       - '--web.enable-lifecycle'
       - '--web.external-url=${PROMETHEUS_URL:-http://localhost:9090}'
+      - '--web.enable-admin-api'
     restart: unless-stopped
     expose:
       - 9090
