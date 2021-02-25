@@ -1,4 +1,4 @@
-version: '2.1'
+version: '3.3'
 
 services:
   nodeexporter:
@@ -51,10 +51,26 @@ services:
     command:
       - '-nginx.scrape-uri=${NGINX_SCRAPE_URI:-http://localhost:8087/nginx_status}'
     restart: unless-stopped
-    ports:
-      - 9113:9113
+    expose:
+      - 9113
     extra_hosts:
       - "host.docker.internal:${DOCKER_HOST_INTERNAL_IP}"
     labels:
       org.label-schema.group: "monitoring"
+      host.name: "${HOST_NAME}"
+
+  promtail: # TODO: plug to loki
+    image: grafana/promtail:2.1.0
+    container_name: promtail
+    environment:
+      - HOST_NAME=${HOST_NAME}
+    volumes:
+      - ./promtail/promtail.yml:/etc/promtail/promtail.yml
+      - promtail_data:/promtail/
+      - /var/log:/var/log:ro
+    command:
+      - '-config.file=/etc/promtail/promtail.yml'
+      - '-config.expand-env=true'
+    labels:
+      group: "monitoring"
       host.name: "${HOST_NAME}"

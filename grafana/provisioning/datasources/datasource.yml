@@ -9,3 +9,16 @@ datasources:
     basicAuth: false
     isDefault: true
     editable: true
+
+  - name: Loki
+    type: loki
+    access: proxy
+    url: http://loki:3100
+    # basicAuth: true
+    # basicAuthUser: my_user
+    # basicAuthPassword: test_password
+    jsonData:
+      maxLines: 1000
+      httpHeaderName1: X-Scope-OrgID
+    secureJsonData:
+      httpHeaderValue1: 'grafana'

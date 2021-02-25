@@ -31,10 +31,18 @@ Containers:
 * cAdvisor (containers metrics collector)
 * Caddy (reverse proxy and basic auth provider for prometheus and alertmanager)
 * blackboxexporter (monitor website availability)  `http://<host-ip>:9115`
+* loki (log aggregation) `http://<host-ip>:3100`
+* promtail (get log files)
+
+Files to personalize :
+* .env (from [.env.dist](.env.dist))
+* alertmanager/alertmanager.yml (from [alertmanager/alertmanager.yml.dist](alertmanager/alertmanager.yml.dist))
+* prometheus/blackbox_targets.yml (from [prometheus/blackbox_targets.yml.dist](prometheus/blackbox_targets.yml.dist))
 
 ## Setup Grafana
 
-Navigate to `http://<host-ip>:3000` and login with user ***admin*** password ***admin***. You can change the credentials in the compose file or by supplying the `ADMIN_USER` and `ADMIN_PASSWORD` environment variables on compose up. The config file can be added directly in grafana part like this
+Navigate to `http://<host-ip>:3000` and login with user ***admin*** password ***admin***. You can change the credentials in the compose file or by supplying the `ADMIN_USER` and `ADMIN_PASSWORD` environment variables on compose up. The config file can be added directly in grafana part like this.
+You can also set those environment variables in a `.env` file.
 ```
 grafana:
   image: grafana/grafana:7.2.0
@@ -116,6 +124,22 @@ The Monitor Services Dashboard shows key metrics for monitoring the containers t
 * Prometheus HTTP requests graph
 * Prometheus alerts graph
 
+***Blackbox Dashboard***
+
+![Blackbox Dashboard](https://grafana.com/api/dashboards/7587/images/4794/image)
+
+See the original dashboard: [https://grafana.com/grafana/dashboards/7587](https://grafana.com/grafana/dashboards/7587).  
+The Blackbox Dashboard shows key metrics for monitoring the containers that make up the monitoring stack:
+
+* Prometheus container uptime, monitoring stack total memory usage, Prometheus local storage memory chunks and series
+* Container CPU usage graph
+* Container memory usage graph
+* Prometheus chunks to persist and persistence urgency graphs
+* Prometheus chunks ops and checkpoint duration graphs
+* Prometheus samples ingested rate, target scrapes and scrape duration graphs
+* Prometheus HTTP requests graph
+* Prometheus alerts graph
+
 ## Define alerts
 
 Three alert groups have been setup within the [alert.rules.yml](https://github.com/stefanprodan/dockprom/blob/master/prometheus/alert.rules) configuration file:
@@ -126,112 +150,13 @@ Three alert groups have been setup within the [alert.rules.yml](https://github.c
   
 First, create the `prometheus/alert.rules.yml` file.  
 You can check rules with `docker-compose exec prometheus promtool check rules /etc/prometheus/alert.rules.yml`
-See examples here [https://awesome-prometheus-alerts.grep.to/rules.html#prometheus-self-monitoring](https://awesome-prometheus-alerts.grep.to/rules.html#prometheus-self-monitoring)  
+Most alerts come from here : [https://awesome-prometheus-alerts.grep.to/rules.html#prometheus-self-monitoring](https://awesome-prometheus-alerts.grep.to/rules.html#prometheus-self-monitoring)  
 To test alerts slack message, you can use this service: https://juliusv.com/promslack/
   
 You can modify the alert rules and reload them by making a HTTP POST call to Prometheus:
 
 ```
 curl -X POST http://admin:admin@<host-ip>:9090/-/reload
-```
-
-***Monitoring services alerts***
-
-Trigger an alert if any of the monitoring targets (node-exporter and cAdvisor) are down for more than 30 seconds:
-
-```yaml
-- alert: monitor_service_down
-    expr: up == 0
-    for: 30s
-    labels:
-      severity: critical
-    annotations:
-      summary: "Monitor service non-operational"
-      description: "Service {{ $labels.instance }} is down."
-```
-
-***Docker Host alerts***
-
-Trigger an alert if the Docker host CPU is under high load for more than 30 seconds:
-
-```yaml
-- alert: high_cpu_load
-    expr: node_load1 > 1.5
-    for: 30s
-    labels:
-      severity: warning
-    annotations:
-      summary: "Server under high load"
-      description: "Docker host is under high load, the avg load 1m is at {{ $value}}. Reported by instance {{ $labels.instance }} of job {{ $labels.job }}."
-```
-
-Modify the load threshold based on your CPU cores.
-
-Trigger an alert if the Docker host memory is almost full:
-
-```yaml
-- alert: high_memory_load
-    expr: (sum(node_memory_MemTotal_bytes) - sum(node_memory_MemFree_bytes + node_memory_Buffers_bytes + node_memory_Cached_bytes) ) / sum(node_memory_MemTotal_bytes) * 100 > 85
-    for: 30s
-    labels:
-      severity: warning
-    annotations:
-      summary: "Server memory is almost full"
-      description: "Docker host memory usage is {{ humanize $value}}%. Reported by instance {{ $labels.instance }} of job {{ $labels.job }}."
-```
-
-Trigger an alert if the Docker host storage is almost full:
-
-```yaml
-- alert: high_storage_load
-    expr: (node_filesystem_size_bytes{fstype="aufs"} - node_filesystem_free_bytes{fstype="aufs"}) / node_filesystem_size_bytes{fstype="aufs"}  * 100 > 85
-    for: 30s
-    labels:
-      severity: warning
-    annotations:
-      summary: "Server storage is almost full"
-      description: "Docker host storage usage is {{ humanize $value}}%. Reported by instance {{ $labels.instance }} of job {{ $labels.job }}."
-```
-
-***Docker Containers alerts***
-
-Trigger an alert if a container is down for more than 30 seconds:
-
-```yaml
-- alert: jenkins_down
-    expr: absent(container_memory_usage_bytes{name="jenkins"})
-    for: 30s
-    labels:
-      severity: critical
-    annotations:
-      summary: "Jenkins down"
-      description: "Jenkins container is down for more than 30 seconds."
-```
-
-Trigger an alert if a container is using more than 10% of total CPU cores for more than 30 seconds:
-
-```yaml
-- alert: jenkins_high_cpu
-    expr: sum(rate(container_cpu_usage_seconds_total{name="jenkins"}[1m])) / count(node_cpu_seconds_total{mode="system"}) * 100 > 10
-    for: 30s
-    labels:
-      severity: warning
-    annotations:
-      summary: "Jenkins high CPU usage"
-      description: "Jenkins CPU usage is {{ humanize $value}}%."
-```
-
-Trigger an alert if a container is using more than 1.2GB of RAM for more than 30 seconds:
-
-```yaml
-- alert: jenkins_high_memory
-    expr: sum(container_memory_usage_bytes{name="jenkins"}) > 1200000000
-    for: 30s
-    labels:
-      severity: warning
-    annotations:
-      summary: "Jenkins high memory usage"
-      description: "Jenkins memory consumption is at {{ humanize $value}}."
 ```
 
 ## Setup alerting
@@ -271,19 +196,6 @@ receivers:
 
 The blackbox exporter allows blackbox probing of endpoints over HTTP, HTTPS, DNS, TCP and ICMP. See [https://github.com/prometheus/blackbox_exporter](https://github.com/prometheus/blackbox_exporter).
 Add targets you want to monitor in `prometheus/blackbox_targets.yml`.
-
-## Updating Grafana to v5.2.2
-
-[In Grafana versions >= 5.1 the id of the grafana user has been changed](http://docs.grafana.org/installation/docker/#migration-from-a-previous-version-of-the-docker-container-to-5-1-or-later). Unfortunately this means that files created prior to 5.1 won’t have the correct permissions for later versions.
-
-| Version |   User  | User ID |
-|:-------:|:-------:|:-------:|
-|  < 5.1  | grafana |   104   |
-|  \>= 5.1 | grafana |   472   |
-
-There are two possible solutions to this problem.
-- Change ownership from 104 to 472
-- Start the upgraded container as user 104
 
 ##### Specifying a user in docker-compose.yml
 

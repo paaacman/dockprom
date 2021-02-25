@@ -3,13 +3,15 @@ version: '3'
 networks:
   monitor-net:
     driver: bridge
+  loki:
 
 volumes:
     prometheus_data: {}
     grafana_data: {}
+    loki_data: {}
+    promtail_data: {}
 
 services:
-
   prometheus:
     image: prom/prometheus:v2.25.0
     container_name: prometheus
@@ -33,6 +35,27 @@ services:
       group: "monitoring"
       host.name: "${HOST_NAME}"
 
+  grafana:
+    image: grafana/grafana:7.4.3
+    container_name: grafana
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards
+      - ./grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
+    environment:
+      - GF_SECURITY_ADMIN_USER=${ADMIN_USER:-admin}
+      - GF_SECURITY_ADMIN_PASSWORD=${ADMIN_PASSWORD:-admin}
+      - GF_USERS_ALLOW_SIGN_UP=false
+    restart: unless-stopped
+    expose:
+      - 3000
+    networks:
+      - monitor-net
+      - loki
+    labels:
+      group: "monitoring"
+      host.name: "${HOST_NAME}"
+
   alertmanager:
     image: prom/alertmanager:v0.21.0
     container_name: alertmanager
@@ -46,6 +69,7 @@ services:
       - 9093
     networks:
       - monitor-net
+      - loki
     labels:
       group: "monitoring"
       host.name: "${HOST_NAME}"
@@ -68,6 +92,30 @@ services:
       - 9100
     networks:
       - monitor-net
+    labels:
+      group: "monitoring"
+      host.name: "${HOST_NAME}"
+
+  caddy:
+    image: stefanprodan/caddy
+    container_name: caddy
+    ports:
+      - "3000:3000"
+      - "9090:9090"
+      - "9093:9093"
+      - "9091:9091"
+      - "9115:9115"
+      - "8080:8080"
+      - "${LOKI_PORT:-3100}:3100"
+    volumes:
+      - ./caddy:/etc/caddy
+    environment:
+      - ADMIN_USER=${ADMIN_USER:-admin}
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD:-admin}
+    restart: unless-stopped
+    networks:
+      - monitor-net
+      - loki
     labels:
       group: "monitoring"
       host.name: "${HOST_NAME}"
@@ -99,48 +147,6 @@ services:
       group: "monitoring"
       host.name: "${HOST_NAME}"
 
-  grafana:
-    image: grafana/grafana:7.4.2
-    container_name: grafana
-    volumes:
-      - grafana_data:/var/lib/grafana
-      - ./grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards
-      - ./grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
-    environment:
-      - GF_SECURITY_ADMIN_USER=${ADMIN_USER:-admin}
-      - GF_SECURITY_ADMIN_PASSWORD=${ADMIN_PASSWORD:-admin}
-      - GF_USERS_ALLOW_SIGN_UP=false
-    restart: unless-stopped
-    expose:
-      - 3000
-    networks:
-      - monitor-net
-    labels:
-      group: "monitoring"
-      host.name: "${HOST_NAME}"
-
-  caddy:
-    image: stefanprodan/caddy
-    container_name: caddy
-    ports:
-      - "3000:3000"
-      - "9090:9090"
-      - "9093:9093"
-      - "9091:9091"
-      - "9115:9115"
-      - "8080:8080"
-    volumes:
-      - ./caddy:/etc/caddy
-    environment:
-      - ADMIN_USER=${ADMIN_USER:-admin}
-      - ADMIN_PASSWORD=${ADMIN_PASSWORD:-admin}
-    restart: unless-stopped
-    networks:
-      - monitor-net
-    labels:
-      group: "monitoring"
-      host.name: "${HOST_NAME}"
-
   blackboxexporter:
     image: prom/blackbox-exporter
     container_name: blackboxexporter
@@ -162,12 +168,48 @@ services:
     command:
       - '-nginx.scrape-uri=${NGINX_SCRAPE_URI:-http://localhost:8087/nginx_status}'
     restart: unless-stopped
-    ports:
-      - 9113:9113
+    expose:
+      - 9113
     networks:
       - monitor-net
     extra_hosts:
       - "host.docker.internal:${DOCKER_HOST_INTERNAL_IP}"
+    labels:
+      group: "monitoring"
+      host.name: "${HOST_NAME}"
+
+  loki:
+    image: grafana/loki:2.1.0
+    container_name: loki
+    volumes:
+      - ./loki/loki.yml:/etc/loki/loki.yml
+      - ./loki/alerts:/etc/loki/alerts
+      - loki_data:/loki
+    expose:
+      - 3100
+    command:
+      - '-config.file=/etc/loki/loki.yml'
+      - '-config.expand-env=true'
+    networks:
+      - loki
+    labels:
+      group: "monitoring"
+      host.name: "${HOST_NAME}"
+
+  promtail:
+    image: grafana/promtail:2.1.0
+    container_name: promtail
+    environment:
+      - HOST_NAME=${HOST_NAME}
+    volumes:
+      - ./promtail/promtail.yml:/etc/promtail/promtail.yml
+      - promtail_data:/promtail/
+      - /var/log:/var/log:ro
+    command:
+      - '-config.file=/etc/promtail/promtail.yml'
+      - '-config.expand-env=true'
+    networks:
+      - loki
     labels:
       group: "monitoring"
       host.name: "${HOST_NAME}"
