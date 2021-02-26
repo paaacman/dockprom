@@ -1001,8 +1001,8 @@
   "schemaVersion": 27,
   "style": "dark",
   "tags": [
-      "blackbox",
-      "prometheus"
+    "prometheus",
+    "blackbox"
   ],
   "templating": {
     "list": [

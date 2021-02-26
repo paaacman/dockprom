@@ -1,9 +1,11 @@
 {
   "id": null,
-  "title": "Docker Host",
-  "description": "Docker host metrics",
+  "title": "Host node",
+  "description": "Host data by node",
   "tags": [
-    "system"
+    "prometheus",
+    "system",
+    "node_exporter"
   ],
   "style": "dark",
   "timezone": "browser",

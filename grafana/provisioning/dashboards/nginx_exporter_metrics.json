@@ -482,9 +482,9 @@
   "schemaVersion": 18,
   "style": "dark",
   "tags": [
-    "nginx",
     "prometheus",
-    "nginx prometheus exporter"
+    "nginx",
+    "nginx_exporter"
   ],
   "templating": {
     "list": [

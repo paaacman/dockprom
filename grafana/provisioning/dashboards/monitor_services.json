@@ -2,7 +2,8 @@
   "id": null,
   "title": "Monitor Services",
   "tags": [
-    "prometheus"
+    "prometheus",
+    "docker"
   ],
   "style": "dark",
   "timezone": "browser",
