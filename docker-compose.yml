@@ -185,7 +185,7 @@ services:
     container_name: nginxexporter
     command:
       - '-nginx.scrape-uri=${NGINX_SCRAPE_URI:-http://localhost:8087/nginx_status}'
-      - '-prometheus.const-labels host=${HOST_NAME}'
+      - '-prometheus.const-labels=host=${HOST_NAME}'
     restart: unless-stopped
     expose:
       - 9113
