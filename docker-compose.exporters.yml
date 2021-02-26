@@ -55,6 +55,7 @@ services:
       - 9113
     extra_hosts:
       - "host.docker.internal:${DOCKER_HOST_INTERNAL_IP}"
+      - '-prometheus.const-labels host=${HOST_NAME}'
     labels:
       org.label-schema.group: "monitoring"
       host.name: "${HOST_NAME}"

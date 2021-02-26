@@ -5,3 +5,4 @@
 /prometheus/blackbox_targets.yml
 /alertmanager/alertmanager.yml
 /cadvisor_debug
+.env
