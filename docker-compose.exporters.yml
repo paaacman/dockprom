@@ -60,11 +60,14 @@ services:
       org.label-schema.group: "monitoring"
       host.name: "${HOST_NAME}"
 
-  promtail: # TODO: plug to loki
+  promtail:
     image: grafana/promtail:2.1.0
     container_name: promtail
     environment:
-      - HOST_NAME=${HOST_NAME}
+      - HOST_NAME
+      - LOKI_EXTERNAL_URL
+      - LOKI_USERNAME
+      - LOKI_PASSWORD
     volumes:
       - ./promtail/promtail.yml:/etc/promtail/promtail.yml
       - promtail_data:/promtail/
@@ -75,3 +78,6 @@ services:
     labels:
       group: "monitoring"
       host.name: "${HOST_NAME}"
+
+volumes:
+  promtail_data: {}
