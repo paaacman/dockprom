@@ -46,10 +46,11 @@ services:
       - ./grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards
       - ./grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
     environment:
-      - GF_DEFAULT_INSTANCE_NAME=${HOST_NAME}
       - GF_SECURITY_ADMIN_USER
       - GF_SECURITY_ADMIN_PASSWORD
+      - GF_DEFAULT_INSTANCE_NAME=${HOST_NAME}
       - GF_USERS_ALLOW_SIGN_UP=false
+      - GF_SERVER_ENABLE_GZIP=true
       - GF_SERVER_ROOT_URL
     restart: unless-stopped
     ports:
