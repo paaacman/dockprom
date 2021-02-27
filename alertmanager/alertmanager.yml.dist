@@ -6,13 +6,16 @@ route:
   # resend them.
   repeat_interval: 1h
   receiver: 'slack'
+  group_wait: 0s
+  group_interval: 1m
 
 receivers:
   - name: 'slack'
-    slack_configs:
+    slack_configs: # see templates https://github.com/prometheus/alertmanager/blob/master/template/default.tmpl
       - send_resolved: true
         #color: '{{ if eq .Status "firing" -}}{{ if eq .CommonLabels.severity "warning" -}}warning{{- else if eq .CommonLabels.severity "critical" -}}danger{{- else -}}#439FE0{{- end -}}{{ else -}}good{{- end }}'
-        title: '{{ template "slack.default.title" . }}'
+        #title: '{{ template "slack.default.title" . }}'
+        title: '[{{ .Status | toUpper }}{{ if eq .Status "firing" }}:{{ .Alerts.Firing | len }}{{ end }}] {{ .GroupLabels.SortedPairs.Values | join " " }} {{ if gt (len .CommonLabels) (len .GroupLabels) }}({{ with .CommonLabels.Remove .GroupLabels.Names }}{{ if not (match "id|image|container_label_com_docker_compose.*" .Name) }}{{ .Values | join " " }}{{ end }}){{ end }}{{ end }} '
         title_link: '{{ template "slack.default.titlelink" . }}'
         pretext: '{{ .CommonAnnotations.summary }}'
         text:
