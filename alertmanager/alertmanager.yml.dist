@@ -6,8 +6,6 @@ route:
   # resend them.
   repeat_interval: 1h
   receiver: 'slack'
-  group_wait: 0s
-  group_interval: 1m
 
 receivers:
   - name: 'slack'

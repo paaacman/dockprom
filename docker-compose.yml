@@ -72,7 +72,6 @@ services:
     command:
       - '--config.file=/etc/alertmanager/alertmanager.yml'
       - '--storage.path=/alertmanager'
-      - '--web.external-url=${ALERTMANAGER_EXTERNAL_URL}'
     restart: unless-stopped
     expose:
       - 9093
@@ -128,6 +127,7 @@ services:
     container_name: promtail
     environment:
       - HOST_NAME=${HOST_NAME}
+      - LOKI_EXTERNAL_URL
     volumes:
       - ./promtail/promtail.yml:/etc/promtail/promtail.yml
       - promtail_data:/promtail/

@@ -1,0 +1,18 @@
+[
+  {
+    "labels": {
+      "job": "nodeexporter",
+      "group": "monitoring"
+    },
+    "targets": [
+      "nodeexporter:9100"
+    ]
+  },
+  {
+    "labels": {
+      "job": "nodeexporter"
+    },
+    "targets": [
+    ]
+  }
+]

@@ -8,9 +8,6 @@ positions:
 clients:
   - url: ${LOKI_EXTERNAL_URL:http://loki:3100/loki/api/v1/push}
     tenant_id: "promtail_${HOST_NAME}"
-    basic_auth:
-      username: ${LOKI_USERNAME}
-      password: ${LOKI_PASSWORD}
 
 scrape_configs:
   - job_name: system

@@ -1,0 +1,18 @@
+[
+  {
+    "labels": {
+      "job": "nginxexporter",
+      "group": "monitoring"
+    },
+    "targets": [
+      "nginxexporter:9113"
+    ]
+  },
+  {
+    "labels": {
+      "job": "nginxexporter"
+    },
+    "targets": [
+    ]
+  }
+]

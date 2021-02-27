@@ -265,3 +265,10 @@ To run the grafana container as `user: 104` change your `docker-compose.yml` lik
     labels:
       org.label-schema.group: "monitoring"
 ```
+
+## promstack-exporters
+If you use [promstack-exporters](https://github.com/paaacman/promstack-exporters), you have to add your targets in : 
+- prometheus/exporters/node-exporters.yml
+- prometheus/exporters/cadvisor.yml
+- prometheus/exporters/nginx-exporters.yml
+Those targets has

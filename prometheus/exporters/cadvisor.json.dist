@@ -1,0 +1,18 @@
+[
+  {
+    "labels": {
+      "job": "cadvisor",
+      "group": "monitoring"
+    },
+    "targets": [
+      "cadvisor:8080"
+    ]
+  },
+  {
+    "labels": {
+      "job": "cadvisor"
+    },
+    "targets": [
+    ]
+  }
+]
