@@ -6,6 +6,8 @@ A monitoring solution for Docker hosts and containers with [Prometheus](https://
 
 ***If you're looking for a Docker Swarm version please go to [stefanprodan/swarmprom](https://github.com/stefanprodan/swarmprom)***
 
+See [promstack-exporters project](https://github.com/paaacman/promstack-exporters) for a client to install on other machines to monitor.  
+  
 ## Install
 
 Clone this repository on your Docker host, cd into promstack directory and run compose up:
