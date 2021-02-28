@@ -271,4 +271,22 @@ If you use [promstack-exporters](https://github.com/paaacman/promstack-exporters
 - prometheus/exporters/node-exporters.yml
 - prometheus/exporters/cadvisor.yml
 - prometheus/exporters/nginx-exporters.yml
-Those targets has
+
+If you don't configure external exporters, you can comment this section in [prometheus.yml][prometheus/prometheus.yml]  
+```yml
+# prometheus.yml
+...
+scrape_configs:
+  - job_name: 'external'
+    scrape_interval: 15s
+    basic_auth:
+      username: "prometheus"
+      password_file: 'exporters/password'
+    scheme: https
+    tls_config:
+      ca_file: 'exporters/ca.pem'
+    file_sd_configs:
+      - files:
+          - 'exporters/*.json'
+...
+```

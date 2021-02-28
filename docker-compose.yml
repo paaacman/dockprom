@@ -75,6 +75,8 @@ services:
     restart: unless-stopped
     expose:
       - 9093
+    ports:
+      - ${ALERTMANAGER_PORT:-9093}:9093
     networks:
       - monitor-net
       - loki
