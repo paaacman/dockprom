@@ -17,7 +17,7 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": 21,
-  "iteration": 1614595282604,
+  "iteration": 1614595923510,
   "links": [],
   "panels": [
     {
@@ -44,7 +44,7 @@
       "pluginVersion": "7.4.3",
       "targets": [
         {
-          "expr": "{host=~\"$host\", filename=~\"$filename\"} != \"GoogleStackdriverMonitoring\" != \"Go-http-client/2.0\"  != \"promtail/2.1.0\" != \"GET /api/datasources/proxy/\" != \"https://grafana.laponi.io/explore\" != \"https://grafana.laponi.io/d\" != \"loki-clean-logs\"",
+          "expr": "{host=~\"$host\", filename=~\"$filename\"} != \"GoogleStackdriverMonitoring\" != \"Go-http-client/2.0\"  != \"promtail/2.1.0\" != \"GET /api/datasources/proxy/\" != \"https://grafana.laponi.io/explore\" != \"https://grafana.laponi.io/d\" != \"loki-clean-logs\" |~ \"(?i)$searchable_pattern\" ",
           "refId": "A"
         }
       ],
@@ -199,6 +199,28 @@
         "tagsQuery": "",
         "type": "query",
         "useTags": false
+      },
+      {
+        "current": {
+          "selected": true,
+          "text": "",
+          "value": ""
+        },
+        "description": null,
+        "error": null,
+        "hide": 0,
+        "label": "Search (case insensitive)",
+        "name": "searchable_pattern",
+        "options": [
+          {
+            "selected": true,
+            "text": "",
+            "value": ""
+          }
+        ],
+        "query": "",
+        "skipUrlSync": false,
+        "type": "textbox"
       }
     ]
   },
@@ -210,5 +232,5 @@
   "timezone": "",
   "title": "Loki clean logs",
   "uid": "qT3IpwsGk",
-  "version": 5
+  "version": 6
 }
