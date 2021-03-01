@@ -44,7 +44,7 @@
       "pluginVersion": "7.4.3",
       "targets": [
         {
-          "expr": "{host=~\"$host\", filename=~\"$filename\"} != \"GoogleStackdriverMonitoring\" != \"Go-http-client/2.0\"  != \"promtail/2.1.0\" != \"GET /api/datasources/proxy/\" != \"https://grafana.laponi.io/explore\" != \"https://grafana.laponi.io/d\" != \"loki-clean-logs\" |~ \"(?i)$searchable_pattern\" ",
+          "expr": "{host=~\"$host\", filename=~\"$filename\"} != \"GoogleStackdriverMonitoring\" != \"Go-http-client/2.0\"  != \"promtail/2.1.0\" != \"GET /api/datasources/proxy/\" != \"loki-clean-logs\" |~ \"(?i)$searchable_pattern\" ",
           "refId": "A"
         }
       ],
@@ -80,28 +80,6 @@
         "label": "Host:",
         "multi": true,
         "name": "host",
-        "options": [
-          {
-            "selected": true,
-            "text": "All",
-            "value": "$__all"
-          },
-          {
-            "selected": false,
-            "text": "laponi-tools",
-            "value": "laponi-tools"
-          },
-          {
-            "selected": false,
-            "text": "prod",
-            "value": "prod"
-          },
-          {
-            "selected": false,
-            "text": "promstack",
-            "value": "promstack"
-          }
-        ],
         "query": "label_values({host=~\".+\"}, host)",
         "refresh": 0,
         "regex": "",
