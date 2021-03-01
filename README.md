@@ -37,8 +37,9 @@ Containers:
 
 Files to personalize :
 * .env (from [.env.dist](.env.dist)). If you change Prometheus port, change it manually in Grafana dashboards.
-* alertmanager/alertmanager.yml (from [alertmanager/alertmanager.yml.dist](alertmanager/alertmanager.yml.dist))
-* prometheus/blackbox_targets.yml (from [prometheus/blackbox_targets.yml.dist](prometheus/blackbox_targets.yml.dist))
+* `alertmanager/alertmanager.yml` (from [alertmanager/alertmanager.yml.dist](alertmanager/alertmanager.yml.dist)) for slack (or others) notifications.
+* `prometheus/blackbox_targets.yml` (from [prometheus/blackbox_targets.yml.dist](prometheus/blackbox_targets.yml.dist)) to monitor URL availability.
+* `prometheus/exporters/your_targets.json`, `prometheus/exporters/password` and `prometheus/exporters/ca.pem` if you use prometheus `external` scrape_configs. (see [prometheus/prometheus.yml](prometheus/prometheus.yml) and [https://prometheus.io/docs/guides/file-sd/](https://prometheus.io/docs/guides/file-sd/))
 
 ## Setup Grafana
 
