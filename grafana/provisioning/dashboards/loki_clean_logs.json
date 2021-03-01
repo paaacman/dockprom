@@ -17,7 +17,7 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": 21,
-  "iteration": 1614595923510,
+  "iteration": 1614597529411,
   "links": [],
   "panels": [
     {
@@ -55,7 +55,8 @@
   "schemaVersion": 27,
   "style": "dark",
   "tags": [
-    "loki"
+    "logging",
+    "Loki"
   ],
   "templating": {
     "list": [
@@ -232,5 +233,5 @@
   "timezone": "",
   "title": "Loki clean logs",
   "uid": "qT3IpwsGk",
-  "version": 6
+  "version": 9
 }
