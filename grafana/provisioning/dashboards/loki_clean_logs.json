@@ -1,0 +1,214 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": "-- Grafana --",
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "description": "Loki logs without monitoring noise like blackbox pings and Grafana calls.",
+  "editable": true,
+  "gnetId": null,
+  "graphTooltip": 0,
+  "id": 21,
+  "iteration": 1614595282604,
+  "links": [],
+  "panels": [
+    {
+      "datasource": "Loki",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 21,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 2,
+      "options": {
+        "showLabels": false,
+        "showTime": false,
+        "sortOrder": "Descending",
+        "wrapLogMessage": false
+      },
+      "pluginVersion": "7.4.3",
+      "targets": [
+        {
+          "expr": "{host=~\"$host\", filename=~\"$filename\"} != \"GoogleStackdriverMonitoring\" != \"Go-http-client/2.0\"  != \"promtail/2.1.0\" != \"GET /api/datasources/proxy/\" != \"https://grafana.laponi.io/explore\" != \"https://grafana.laponi.io/d\" != \"loki-clean-logs\"",
+          "refId": "A"
+        }
+      ],
+      "title": "Logs without monitoring noise",
+      "type": "logs"
+    }
+  ],
+  "schemaVersion": 27,
+  "style": "dark",
+  "tags": [
+    "loki"
+  ],
+  "templating": {
+    "list": [
+      {
+        "allValue": null,
+        "current": {
+          "selected": false,
+          "text": [
+            "All"
+          ],
+          "value": [
+            "$__all"
+          ]
+        },
+        "datasource": "Loki",
+        "definition": "label_values({host=~\".+\"}, host)",
+        "description": null,
+        "error": null,
+        "hide": 0,
+        "includeAll": true,
+        "label": "Host:",
+        "multi": true,
+        "name": "host",
+        "options": [
+          {
+            "selected": true,
+            "text": "All",
+            "value": "$__all"
+          },
+          {
+            "selected": false,
+            "text": "laponi-tools",
+            "value": "laponi-tools"
+          },
+          {
+            "selected": false,
+            "text": "prod",
+            "value": "prod"
+          },
+          {
+            "selected": false,
+            "text": "promstack",
+            "value": "promstack"
+          }
+        ],
+        "query": "label_values({host=~\".+\"}, host)",
+        "refresh": 0,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 1,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "allValue": null,
+        "current": {
+          "selected": false,
+          "text": [
+            "All"
+          ],
+          "value": [
+            "$__all"
+          ]
+        },
+        "datasource": "Loki",
+        "definition": "label_values({filename=~\".+\"}, filename)",
+        "description": null,
+        "error": null,
+        "hide": 0,
+        "includeAll": true,
+        "label": "Filename:",
+        "multi": true,
+        "name": "filename",
+        "options": [
+          {
+            "selected": true,
+            "text": "All",
+            "value": "$__all"
+          },
+          {
+            "selected": false,
+            "text": "/var/log/auth.log",
+            "value": "/var/log/auth.log"
+          },
+          {
+            "selected": false,
+            "text": "/var/log/daemon.log",
+            "value": "/var/log/daemon.log"
+          },
+          {
+            "selected": false,
+            "text": "/var/log/fail2ban.log",
+            "value": "/var/log/fail2ban.log"
+          },
+          {
+            "selected": false,
+            "text": "/var/log/kern.log",
+            "value": "/var/log/kern.log"
+          },
+          {
+            "selected": false,
+            "text": "/var/log/letsencrypt/letsencrypt.log",
+            "value": "/var/log/letsencrypt/letsencrypt.log"
+          },
+          {
+            "selected": false,
+            "text": "/var/log/nginx/access.log",
+            "value": "/var/log/nginx/access.log"
+          },
+          {
+            "selected": false,
+            "text": "/var/log/nginx/error.log",
+            "value": "/var/log/nginx/error.log"
+          },
+          {
+            "selected": false,
+            "text": "/var/log/syslog",
+            "value": "/var/log/syslog"
+          },
+          {
+            "selected": false,
+            "text": "/var/log/unattended-upgrades/unattended-upgrades.log",
+            "value": "/var/log/unattended-upgrades/unattended-upgrades.log"
+          },
+          {
+            "selected": false,
+            "text": "/var/log/user.log",
+            "value": "/var/log/user.log"
+          }
+        ],
+        "query": "label_values({filename=~\".+\"}, filename)",
+        "refresh": 0,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      }
+    ]
+  },
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "",
+  "title": "Loki clean logs",
+  "uid": "qT3IpwsGk",
+  "version": 5
+}
