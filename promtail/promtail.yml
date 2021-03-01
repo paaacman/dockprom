@@ -19,3 +19,20 @@ scrape_configs:
           __path__: /var/log/**/*log
           host: ${HOST_NAME}
           env: ${ENV}
+    pipeline_stages:
+      - match:
+          selector: '{filename=~"/var/log/nginx/access*.log"}'
+          stages:
+            - regex:
+                expression: '^(?P<remote_addr>[\w\.]+) - (?P<remote_user>[^ ]*) \[(?P<time_local>.*)\] "(?P<method>[^ ]*) (?P<request_url>[^ ]*) (?P<request_http_protocol>[^ ]*)" (?P<status>[\d]+) (?P<body_bytes_sent>[\d]+) "(?P<http_referer>[^"]*)" "(?P<http_user_agent>[^"]*)"?'
+            - labels:
+                remote_addr:
+                remote_user:
+                time_local:
+                method:
+                request_url:
+                request_http_protocol:
+                status:
+                body_bytes_sent:
+                http_referer:
+                http_user_agent:
