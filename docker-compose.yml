@@ -97,6 +97,7 @@ services:
     command:
       - '-config.file=/etc/loki/loki.yml'
       - '-config.expand-env=true'
+    restart: unless-stopped
     networks:
       - loki
     labels:
@@ -138,6 +139,7 @@ services:
     command:
       - '-config.file=/etc/promtail/promtail.yml'
       - '-config.expand-env=true'
+    restart: unless-stopped
     networks:
       - loki
     labels:
