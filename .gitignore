@@ -5,6 +5,7 @@
 /prometheus/blackbox_targets.yml
 /prometheus/exporters/node-exporter.json
 /prometheus/exporters/*.json
+/prometheus/exporters/ca.pem
 /prometheus/exporters/password
 /alertmanager/alertmanager.yml
 /cadvisor_debug
