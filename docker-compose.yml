@@ -1,7 +1,7 @@
 version: '3'
 
 networks:
-  exporters:
+  prometheus-exporters:
   loki:
   prometheus:
 
@@ -34,7 +34,7 @@ services:
       - ${PROMETHEUS_PORT:-9090}:9090
     networks:
       - prometheus
-      - exporters
+      - prometheus-exporters
       - loki
     labels:
       group: "monitoring"
@@ -122,7 +122,7 @@ services:
     expose:
       - 9100
     networks:
-      - exporters
+      - prometheus-exporters
     labels:
       group: "monitoring"
       host.name: "${HOST_NAME}"
@@ -174,7 +174,7 @@ services:
     expose:
       - 8080
     networks:
-      - exporters
+      - prometheus-exporters
     labels:
       group: "monitoring"
       host.name: "${HOST_NAME}"
@@ -186,7 +186,7 @@ services:
     expose:
       - 9115
     networks:
-      - exporters
+      - prometheus-exporters
     volumes:
       - ./blackbox/config:/config
     command: '--config.file=/config/blackbox.yml'
@@ -204,7 +204,7 @@ services:
     expose:
       - 9113
     networks:
-      - exporters
+      - prometheus-exporters
     extra_hosts:
       - "host.docker.internal:${DOCKER_HOST_INTERNAL_IP}"
     labels:
