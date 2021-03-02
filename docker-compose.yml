@@ -21,11 +21,10 @@ services:
       - prometheus_data:/prometheus
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
-      - '--storage.tsdb.path=/prometheus'
+      - '--storage.tsdb.path=/prometheus/data/'
       - '--web.console.libraries=/etc/prometheus/console_libraries'
       - '--web.console.templates=/etc/prometheus/consoles'
-      - '--storage.tsdb.retention.time=200h'
-      - '--web.enable-lifecycle'
+      - '--storage.tsdb.retention.time=365d'
       - '--web.external-url=${PROMETHEUS_URL:-http://localhost:9090}'
       - '--web.enable-admin-api'
     restart: unless-stopped
