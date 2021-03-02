@@ -41,12 +41,12 @@ scrape_configs:
       - targets: [ 'nginxexporter:9113' ]
 
   - job_name: 'prometheus'
-    scrape_interval: 10s
+    scrape_interval: 1m
     static_configs:
       - targets: ['prometheus:9090']
 
   - job_name: 'blackbox'
-    scrape_interval: 60s
+    scrape_interval: 1m
     metrics_path: /probe
     params:
       module: [http_get]  # Look for a HTTP 200 response.
@@ -64,6 +64,11 @@ scrape_configs:
         regex: .*
         target_label: __address__
         replacement: blackboxexporter:9115
+
+  - job_name: 'loki'
+    scrape_interval: 1m
+    static_configs:
+      - targets: ['loki:9090']
 
 alerting:
   alertmanagers:

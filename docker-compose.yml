@@ -1,9 +1,9 @@
 version: '3'
 
 networks:
-  monitor-net:
-    driver: bridge
+  exporters:
   loki:
+  prometheus:
 
 volumes:
     prometheus_data: {}
@@ -33,7 +33,9 @@ services:
     ports:
       - ${PROMETHEUS_PORT:-9090}:9090
     networks:
-      - monitor-net
+      - prometheus
+      - exporters
+      - loki
     labels:
       group: "monitoring"
       host.name: "${HOST_NAME}"
@@ -56,7 +58,7 @@ services:
     ports:
       - ${GRAFANA_PORT:-3000}:3000
     networks:
-      - monitor-net
+      - prometheus
       - loki
     labels:
       group: "monitoring"
@@ -78,7 +80,7 @@ services:
     ports:
       - ${ALERTMANAGER_PORT:-9093}:9093
     networks:
-      - monitor-net
+      - prometheus
       - loki
     labels:
       group: "monitoring"
@@ -120,7 +122,7 @@ services:
     expose:
       - 9100
     networks:
-      - monitor-net
+      - exporters
     labels:
       group: "monitoring"
       host.name: "${HOST_NAME}"
@@ -172,7 +174,7 @@ services:
     expose:
       - 8080
     networks:
-      - monitor-net
+      - exporters
     labels:
       group: "monitoring"
       host.name: "${HOST_NAME}"
@@ -184,7 +186,7 @@ services:
     expose:
       - 9115
     networks:
-      - monitor-net
+      - exporters
     volumes:
       - ./blackbox/config:/config
     command: '--config.file=/config/blackbox.yml'
@@ -202,7 +204,7 @@ services:
     expose:
       - 9113
     networks:
-      - monitor-net
+      - exporters
     extra_hosts:
       - "host.docker.internal:${DOCKER_HOST_INTERNAL_IP}"
     labels:
