@@ -44,7 +44,7 @@
       "pluginVersion": "7.4.3",
       "targets": [
         {
-          "expr": "{host=~\"$host\", filename=~\"$filename\"} != \"GoogleStackdriverMonitoring\" != \"Go-http-client/2.0\"  != \"promtail/2.1.0\" != \"GET /api/datasources/proxy/\" != \"loki-clean-logs\" |~ \"(?i)$searchable_pattern\" ",
+          "expr": "{host=~\"$host\", filename=~\"$filename\"} != \"GoogleStackdriverMonitoring\" != \"Go-http-client/2.0\"  != \"promtail/2.1.0\" != \"GET /api/datasources/proxy/\" != \"loki-clean-logs\" != \"GET /metrics HTTP/\" |~ \"(?i)$searchable_pattern\" ",
           "refId": "A"
         }
       ],
