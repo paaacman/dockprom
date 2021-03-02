@@ -26,7 +26,7 @@ scrape_configs:
                 expression: '^((?P<server_name>[\w\-.]+) - )?(?P<remote_addr>[\w\.]+) - (?P<remote_user>[^ ]*) \[(?P<time_local>.*)\] "(?P<method>[^ ]*) (?P<request_url>[^ ]*) (?P<request_http_protocol>[^ ]*)" (?P<status>[\d]+) (?P<body_bytes_sent>[\d]+) "(?P<http_referer>[^"]*)" "(?P<http_user_agent>[^"]*)"?'
             - labels:
                 server_name:
-                #remote_addr:
+                remote_addr:
                 #remote_user:
                 #time_local:
                 #method:

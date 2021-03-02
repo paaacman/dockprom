@@ -68,7 +68,7 @@ scrape_configs:
   - job_name: 'loki'
     scrape_interval: 1m
     static_configs:
-      - targets: ['loki:9090']
+      - targets: ['loki:3100']
 
 alerting:
   alertmanagers:
