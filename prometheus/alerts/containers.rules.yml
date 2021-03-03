@@ -14,7 +14,7 @@ groups:
       # cAdvisor can sometimes consume a lot of CPU, so this alert will fire constantly.
       # If you want to exclude it from this alert, exclude the serie having an empty name: container_cpu_usage_seconds_total{name!=""}
       - alert: ContainerCpuUsage
-        expr: (sum(rate(container_cpu_usage_seconds_total{name!=""}[3m])) BY (instance, name) * 100) > 80
+        expr: (sum(rate(container_cpu_usage_seconds_total{name!=""}[3m])) BY (instance, name) * 100) > 150 # 1 CPU core + 1/2 core
         for: 2m
         labels:
           severity: warning

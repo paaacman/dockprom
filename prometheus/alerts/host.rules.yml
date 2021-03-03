@@ -139,7 +139,7 @@ groups:
       # Please read: https://github.com/samber/awesome-prometheus-alerts/issues/58
       - alert: HostContextSwitching
         expr: (rate(node_context_switches_total[5m])) / (count without(cpu, mode) (node_cpu_seconds_total{mode="idle"})) > 1000
-        for: 0m
+        for: 2m
         labels:
           severity: warning
         annotations:
