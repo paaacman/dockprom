@@ -190,6 +190,10 @@ services:
     volumes:
       - ./blackbox/config:/config
     command: '--config.file=/config/blackbox.yml'
+    dns:
+      - 1.1.1.1
+      - 8.8.8.8
+      - 9.9.9.9
     labels:
       group: "monitoring"
       host.name: "${HOST_NAME}"
